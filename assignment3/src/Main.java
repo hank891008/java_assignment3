@@ -1,10 +1,7 @@
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
-
 import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.*;
 import static java.util.stream.Collectors.toSet;
 
 public class Main {
@@ -72,7 +69,6 @@ public class Main {
             this.info = new Person(FirstName, LastName, city, BirthDay, gender);
             this.Scores = new ScoreSheet(Math, English, Chinese);
         }
-
         public String getId() {
             return Id;
         }
@@ -82,7 +78,6 @@ public class Main {
         public ScoreSheet getScores() {
             return Scores;
         }
-
         @Override
         public String toString() {
             return this.Id + " " + getInfo().getFirstName() + " " + getInfo().getLastName() + " " + getInfo().getCity() + " " + getInfo().getBirthDay()
@@ -91,8 +86,9 @@ public class Main {
     }
     public static void main(String[] args){
         List<Student> student = Arrays.asList(
+                new Student("408262201","Leonardo", "DiCaprio", City.TAICHUNG, "1974/11/11", Gender.MALE, 59, 100, 0),
                 new Student("408262208", "hank", "hsu",City.TAIPEI, "2000/10/08",Gender.MALE, 35, 100, 100),
-                new Student("408262201","Leonardo", "DiCaprio", City.TAICHUNG, "1974/11/11", Gender.MALE, 59, 100, 0)
+                new Student("408262202", "catherine", "tsai", City.TAIPEI, "2001/01/31", Gender.FEMALE, 100, 100, 100)
         );
         /*for(int i = 0; i < student.size(); i++){
             System.out.println(student.get(i));
@@ -100,23 +96,36 @@ public class Main {
         //System.out.println(student.get(0).getId());
 
         System.out.println("----------------------Q1----------------------");
-        student.stream().sorted(comparing(Student::getId)).forEach(s -> System.out.println(s.getInfo().getFirstName() + " " + s.getInfo().getLastName()));
+        student.stream()
+                .sorted(comparing(Student::getId))
+                .forEach(s -> System.out.println(s.getInfo().getFirstName() + " " + s.getInfo().getLastName()));
         System.out.println("");
-        student.stream().sorted(comparing(s -> s.getInfo().getBirthDay())).forEach(s -> System.out.println(s.getInfo().getFirstName() + " " + s.getInfo().getLastName()));
+        student.stream()
+                .sorted(comparing(s -> s.getInfo().getBirthDay()))
+                .forEach(s -> System.out.println(s.getInfo().getFirstName() + " " + s.getInfo().getLastName()));
 
         System.out.println("----------------------Q2----------------------");
         Set<City> city_of_student = student.stream().map(s -> s.getInfo().getCity()).collect(toSet());
-        city_of_student.stream().forEach(System.out::println);
+        city_of_student.forEach(System.out::println);
 
         System.out.println("----------------------Q3----------------------");
-
+        Map<City, List<Student>> student_grouping_by_city =
+                student.stream()
+                .collect(Collectors.groupingBy(s -> s.getInfo().getCity()));
+        System.out.println(student_grouping_by_city);
 
         System.out.println("----------------------Q4----------------------");
-
+        Map<Boolean, List<Student>> Student_partition_by_gender =
+                student.stream().collect(Collectors.partitioningBy(s -> s.getInfo().getGender() == Gender.MALE));
+        System.out.println(student_grouping_by_city);
 
         System.out.println("----------------------Q5----------------------");
-
-
+        IntSummaryStatistics mathStatistics = student.stream().collect(summarizingInt(s->s.getScores().getMath()));
+        IntSummaryStatistics englishStatistics = student.stream().collect(summarizingInt(s->s.getScores().getEnglish()));
+        IntSummaryStatistics chineseStatistics = student.stream().collect(summarizingInt(s->s.getScores().getChinese()));
+        System.out.println(mathStatistics);
+        System.out.println(englishStatistics);
+        System.out.println(chineseStatistics);
         System.out.println("----------------------Q6----------------------");
         System.out.println("數學不及格：");
         student.stream().filter(s->s.getScores().getMath() < 60).forEach(s -> System.out.println(s.getId() + " " + s.getInfo().getFirstName() + " " + s.getInfo().getLastName()));
@@ -129,5 +138,8 @@ public class Main {
         student.stream().sorted(comparing(s -> -(s.getScores().getAverage()))).forEach(s -> System.out.println(s.getInfo().getFirstName() + " " + s.getInfo().getLastName() + " " + s.getScores().getAverage()));
 
         System.out.println("----------------------Q8----------------------");
+        Map<Boolean, List<Student>> student_partition_by_average =
+                student.stream().collect(Collectors.partitioningBy(s -> s.getScores().getAverage() > 60));
+        System.out.println(student_partition_by_average);
     }
 }
