@@ -98,7 +98,7 @@ public class Main {
         System.out.println("----------------------Q1----------------------");
         student.stream()
                 .sorted(comparing(Student::getId))
-                .forEach(s -> System.out.println(s.getInfo().getFirstName() + " " + s.getInfo().getLastName()));
+                .forEach(System.out::println);
         System.out.println("");
         student.stream()
                 .sorted(comparing(s -> s.getInfo().getBirthDay()))
@@ -115,17 +115,18 @@ public class Main {
         System.out.println(student_grouping_by_city);
 
         System.out.println("----------------------Q4----------------------");
-        Map<Boolean, List<Student>> Student_partition_by_gender =
+        Map<Boolean, List<Student>> student_partition_by_gender =
                 student.stream().collect(Collectors.partitioningBy(s -> s.getInfo().getGender() == Gender.MALE));
-        System.out.println(student_grouping_by_city);
+        System.out.println(student_partition_by_gender);
 
         System.out.println("----------------------Q5----------------------");
         IntSummaryStatistics mathStatistics = student.stream().collect(summarizingInt(s->s.getScores().getMath()));
         IntSummaryStatistics englishStatistics = student.stream().collect(summarizingInt(s->s.getScores().getEnglish()));
         IntSummaryStatistics chineseStatistics = student.stream().collect(summarizingInt(s->s.getScores().getChinese()));
-        System.out.println(mathStatistics);
-        System.out.println(englishStatistics);
-        System.out.println(chineseStatistics);
+        System.out.println("math : average = " +mathStatistics.getAverage() + " maximum = " + mathStatistics.getMax() + " minimum = " + mathStatistics.getMin());
+        System.out.println("english : average = " + englishStatistics.getAverage() + " maximum = " + englishStatistics.getMax() + " minimum = " + englishStatistics.getMin());
+        System.out.println("chinese : average = " + chineseStatistics.getAverage() + " maximum = " + chineseStatistics.getMax() + " minimum = " + chineseStatistics.getMin());
+
         System.out.println("----------------------Q6----------------------");
         System.out.println("數學不及格：");
         student.stream().filter(s->s.getScores().getMath() < 60).forEach(s -> System.out.println(s.getId() + " " + s.getInfo().getFirstName() + " " + s.getInfo().getLastName()));
@@ -138,8 +139,14 @@ public class Main {
         student.stream().sorted(comparing(s -> -(s.getScores().getAverage()))).forEach(s -> System.out.println(s.getInfo().getFirstName() + " " + s.getInfo().getLastName() + " " + s.getScores().getAverage()));
 
         System.out.println("----------------------Q8----------------------");
-        Map<Boolean, List<Student>> student_partition_by_average =
-                student.stream().collect(Collectors.partitioningBy(s -> s.getScores().getAverage() > 60));
-        System.out.println(student_partition_by_average);
+        Map<Boolean, List<Student>> student_partition_by_math =
+                student.stream().collect(Collectors.partitioningBy(s -> s.getScores().getMath() > 60));
+        System.out.println(student_partition_by_math);
+        Map<Boolean, List<Student>> student_partition_by_english =
+                student.stream().collect(Collectors.partitioningBy(s -> s.getScores().getEnglish() > 60));
+        System.out.println(student_partition_by_english);
+        Map<Boolean, List<Student>> student_partition_by_chinese =
+                student.stream().collect(Collectors.partitioningBy(s -> s.getScores().getChinese() > 60));
+        System.out.println(student_partition_by_chinese);
     }
 }
